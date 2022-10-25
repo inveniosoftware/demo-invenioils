@@ -11,10 +11,10 @@ import { OverridableContext } from 'react-overridable';
 import { Router } from 'react-router-dom';
 import 'semantic-ui-less/semantic.less';
 import { config } from './config';
+import { overriddenCmps } from './overridableMapping';
 
 // Checks if browser is IE (unsupported)
 const isIE = !!document.documentMode;
-const overriddenCmps = {};
 
 if (!isIE) {
   ReactDOM.render(
