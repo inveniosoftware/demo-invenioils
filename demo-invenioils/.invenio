@@ -5,7 +5,7 @@ logfile = /logs/invenio-cli.log
 [cookiecutter]
 project_name = InvenioILS Demo Site
 project_shortname = demo-invenioils
-project_site = catalogue.library.cern
+project_site = invenioils.web.cern.ch
 github_repo = inveniosoftware/demo-invenioils
 description = InvenioILS Demo Instance
 author_name = CERN

@@ -1,26 +1,22 @@
-# Dockerfile that builds a fully functional image of your app.
-#
-# This image installs all Python dependencies for your application. It's based
-# on CentOS 7 with Python 3 (https://github.com/inveniosoftware/docker-invenio)
-# and includes Pip, Pipenv, Node.js, NPM and some few standard libraries
-# Invenio usually needs.
-#
-# Note: It is important to keep the commands in this file in sync with your
-# bootstrap script located in ./scripts/bootstrap.
-
 FROM inveniosoftware/centos7-python:3.9
+
+ENV BACKEND_WORKING_DIR=${WORKING_DIR}/src/backend
+
+RUN mkdir -p ${BACKEND_WORKING_DIR}
+COPY ./ ${BACKEND_WORKING_DIR}
+WORKDIR ${BACKEND_WORKING_DIR}
+
+ENV INVENIO_STATIC_URL_PATH='/invenio-assets'
+ENV INVENIO_STATIC_FOLDER=${INVENIO_INSTANCE_PATH}/invenio-assets
 
 COPY Pipfile Pipfile.lock ./
 RUN pipenv install --deploy --system
 
-COPY ./docker/backend/uwsgi.ini ${INVENIO_INSTANCE_PATH}
-COPY ./invenio.cfg ${INVENIO_INSTANCE_PATH}
-COPY ./templates/ ${INVENIO_INSTANCE_PATH}/templates/
-COPY ./ .
-
-RUN invenio collect --verbose  && \
+RUN invenio collect -v && \
     invenio webpack create && \
     invenio webpack install --unsafe && \
     invenio webpack build
 
-ENTRYPOINT [ "bash", "-c"]
+USER ${INVENIO_USER_ID}
+
+CMD [ "bash", "-c", "uwsgi --module invenio_app.wsgi:application --socket 0.0.0.0:5000 --master --processes 2 --threads 2 --stats /tmp/stats.socket"]

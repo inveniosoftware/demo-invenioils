@@ -1,0 +1,66 @@
+name: Docker
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Reason"
+        required: false
+        default: "Manual trigger"
+
+env:
+  BACKEND_IMAGE_NAME: demo-invenioils-backend
+  FRONTEND_IMAGE_NAME: demo-invenioils-frontend
+
+jobs:
+  push:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build backend image
+        run: |
+          docker build -f ./demo-invenioils/docker/backend --tag backend_image .
+      - name: Build frontend image
+        run: |
+          docker build -f ./demo-invenioils/docker/frontend --tag frontend_image .
+      - name: Log into registry
+        run: echo "${{ secrets.DOCKER_PUBLISH_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push backend image
+        run: |
+          BACKEND_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$BACKEND_IMAGE_NAME
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo BACKEND_IMAGE_ID=$BACKEND_IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag backend_image $BACKEND_IMAGE_ID:$VERSION
+          docker push $BACKEND_IMAGE_ID:$VERSION
+
+      - name: Push frontend image
+        run: |
+          FRONTEND_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$FRONTEND_IMAGE_NAME
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo FRONTEND_IMAGE_ID=$FRONTEND_IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag frontend_image $FRONTEND_IMAGE_ID:$VERSION
+          docker push $FRONTEND_IMAGE_ID:$VERSION
