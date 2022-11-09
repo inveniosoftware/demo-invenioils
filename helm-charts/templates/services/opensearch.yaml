@@ -1,0 +1,13 @@
+{{- if .Values.search.enabled -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: search
+spec:
+  selector:
+    app: search
+  ports:
+  - port: 9200
+    protocol: TCP
+{{- end }}

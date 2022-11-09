@@ -1,0 +1,19 @@
+{{- if .Values.rabbitmq.enabled -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mq
+  labels:
+    app: mq
+spec:
+  ports:
+  - name: tcp
+    port: 4369
+    protocol: TCP
+  - name: management
+    port: 5672
+    protocol: TCP
+  selector:
+    app: mq
+{{- end }}

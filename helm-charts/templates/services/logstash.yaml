@@ -1,0 +1,14 @@
+{{- if .Values.logstash.enabled -}}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: logstash
+spec:
+  selector:
+    app: logstash
+  ports:
+  - protocol: TCP
+    port: 5044
+    targetPort: 5044
+{{- end }}
