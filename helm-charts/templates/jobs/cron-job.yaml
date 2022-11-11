@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: recreate-demo-data
+spec:
+  schedule: {{ .Values.cronjob.schedule }}
+  startingDeadlineSeconds: 200
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: recreate-demo-data
+            image: {{ .Values.worker.image }}
+            command:
+              - bash
+              - -c
+              - |
+                invenio setup
+                while [ $? -ne 0 ];
+                do
+                  invenio setup
+                done
+            resources:
+              requests:
+                memory: 500Mi
+                cpu: 0.5
+              limits:
+                memory: 1Gi
+                cpu: 1
+            envFrom:
+            - configMapRef:
+                name: invenio-config
+            env:
+            - name: INVENIO_CELERY_BROKER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.secret_name }}
+                  key: CELERY_BROKER_URL
+            - name: INVENIO_SQLALCHEMY_DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.secret_name }}
+                  key: SQLALCHEMY_DB_URI

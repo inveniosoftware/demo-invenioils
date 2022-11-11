@@ -10,8 +10,8 @@ data:
     socket = 0.0.0.0:5000
     module = invenio_app.wsgi:application
     master = true
-    processes = {{ .Values.web.uwsgi.processes }}
-    threads = {{ .Values.web.uwsgi.threads }}
+    processes = {{ .Values.invenioils.uwsgi.processes }}
+    threads = {{ .Values.invenioils.uwsgi.threads }}
     single-interpreter = true
     need-app = true
     disable-logging = true

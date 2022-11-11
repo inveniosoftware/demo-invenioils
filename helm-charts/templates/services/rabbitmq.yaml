@@ -13,6 +13,8 @@ spec:
     protocol: TCP
   - name: management
     port: 5672
+  - name: management-ui
+    port: 15672
     protocol: TCP
   selector:
     app: mq

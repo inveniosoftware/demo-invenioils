@@ -7,21 +7,17 @@ ingress:
 
 invenioils:
   secret_name: "invenio-secrets"
-  secret_key: "secret-key"
   csrf_enabled: True
-  csrf_secret: "csrf-secret-salt"
-  login_salt: "login_salt"
-  existing_secret: false
+  existing_secret: true
   search:
-    index_prefix: ""
+    index_prefix: "es"
   logging:
     sentry:
-      enabled: false
-      existing_secret: false
+      enabled: true
+      existing_secret: true
       secret_name: "sentry-secrets"
-      dsn: ""
       celery: True
-      environment: "qa"
+      environment: "prod"
   debug: False
   debug_tb_enabled: False
   debug_tb_intercept_redirects: False
@@ -61,7 +57,7 @@ persistence:
   name: "shared-volume"
   access_mode: ReadWriteMany
   size: 10G
-  storage_class: ""
+  storage_class: "cephfs"
 
 redis:
   enabled: true
@@ -70,35 +66,26 @@ redis:
 
 rabbitmq:
   enabled: true
-  image: "rabbitmq:3-management"
-  existing_secret: false
   secret_name: "mq-secrets"
-  default_password: "mq_password"
-  celery_broker_uri: "amqp://guest:mq_password@mq:5672/"
+  existing_secret: true
+  image: "rabbitmq:3-management"
 
 postgresql:
   enabled: false
-  existing_secret: false
+  existing_secret: true
   secret_name: "db-secrets"
-  user: "invenioils"
-  password: "db_password"
-  host: "db"
-  port: "5432"
-  database: "invenioils"
-  sqlalchemy_db_uri: "postgresql+psycopg2://demo-invenioils:demo-invenioils@db/demo-invenioils"
 
 search:
-  enabled: false
-  existing_secret: false
+  enabled: true
+  existing_secret: true
   secret_name: "search-secrets"
-  password: "password"
-  host: "es-invenioils.cern.ch."
+  host: "es"
   user: "username"
-  url_prefix: "es"
+  url_prefix: ""
   port: "9200"
   use_ssl: False
   verify_certs: False
-  index_prefix: "invenioils"
+  index_prefix: ""
 
 cronjob:
   schedule: "0 0 * * *"

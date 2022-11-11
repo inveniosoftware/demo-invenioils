@@ -15,7 +15,7 @@ data:
       stats enable
       stats uri /stats
       stats hide-version
-
+    
       timeout  http-request 10s
       timeout  queue 2m
       timeout  connect 10s
@@ -23,10 +23,39 @@ data:
       timeout  server 2m
       timeout  http-keep-alive 10s
       timeout  check 10s
-
+    
     frontend public
       bind *:8080
-      default_backend apps
+      acl  is_static  path_beg -i /static /images
+      acl  is_static  path_end -i .html .json .ico .txt
+      acl  is_uptime_robot_nginx  path_beg -i /nginx-ping
+      acl  is_uptime_robot_uwsgi  path_beg -i /ping
+      default_backend invenio
+      use_backend     static if is_static
+      use_backend     uptime_robot_nginx if is_uptime_robot_nginx
+      use_backend     uptime_robot_uwsgi if is_uptime_robot_uwsgi
 
-    backend apps
-      server web web:80 check maxconn {{ .Values.haproxy.maxconn }}
+    backend invenio
+      http-check disable-on-404
+      option httpchk OPTIONS /ping HTTP/1.1\nHost:\ {{ .Values.host }}
+      option http-server-close
+
+      # maxconn: containers * uWSGI processes * threads
+      server react-nginx react-nginx:8080 check fall 2 inter 5000 maxconn 16
+
+    backend static
+      http-check disable-on-404
+      option httpchk OPTIONS /nginx-ping HTTP/1.1\nHost:\ {{ .Values.host }}
+      option http-server-close
+    
+      server react-nginx react-nginx:8080 check fall 2 inter 5000 maxconn 500
+
+    backend uptime_robot_nginx
+      http-check disable-on-404
+      option httpchk OPTIONS /nginx-ping HTTP/1.1\nHost:\ {{ .Values.host }}
+      option http-server-close
+
+      server react-nginx react-nginx:8080 check fall 2 inter 5000 maxconn 1
+
+    backend uptime_robot_uwsgi
+      server react-nginx react-nginx:8080 maxconn 1

@@ -1,5 +1,4 @@
 {{- if .Values.redis.enabled -}}
----
 {{- if .Capabilities.APIVersions.Has "apps.openshift.io/v1/DeploymentConfig" }}
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
@@ -23,7 +22,7 @@ spec:
     spec:
       containers:
         - name: cache
-          image: redis:7
+          image: {{ .Values.redis.image }}
           env:
             - name: TZ
               value: "Europe/Zurich"
@@ -31,8 +30,23 @@ spec:
             - containerPort: 6379
               name: tcp
           volumeMounts:
-            - name: data
+            - name: redis-volume
               mountPath: /data
+          resources:
+            requests:
+              memory: 25Mi
+              cpu: 0.1
+            limits:
+              memory: 250Mi
+              cpu: 1
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "redis-cli -h $(hostname) ping"
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
           readinessProbe:
             exec:
               command:
@@ -42,6 +56,6 @@ spec:
             initialDelaySeconds: 15
             timeoutSeconds: 5
       volumes:
-        - name: data
-          emptyDir: {}
-{{- end -}}
+        - name: redis-volume
+          emptyDir: { }
+{{- end }}

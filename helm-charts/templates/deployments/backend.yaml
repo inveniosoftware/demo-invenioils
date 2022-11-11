@@ -1,0 +1,107 @@
+---
+{{- if .Capabilities.APIVersions.Has "apps.openshift.io/v1/DeploymentConfig" }}
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+{{- else }}
+apiVersion: apps/v1
+kind: Deployment
+{{- end }}
+metadata:
+  name: invenio-backend
+spec:
+  replicas: 1
+  {{- if not (.Capabilities.APIVersions.Has "apps.openshift.io/v1/DeploymentConfig") }}
+  selector:
+    matchLabels:
+      app: invenio-backend
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: invenio-backend
+    spec:
+      containers:
+        - name: invenio-backend
+          image: {{ .Values.worker.image }}
+          ports:
+            - containerPort: 5000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: invenio-config
+          env:
+            - name: TZ
+              value: "Europe/Zurich"
+            - name: INVENIO_CELERY_BROKER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rabbitmq.secret_name }}
+                  key: CELERY_BROKER_URL
+            - name: INVENIO_SQLALCHEMY_DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.secret_name }}
+                  key: SQLALCHEMY_DB_URI
+            - name: ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.search.secret_name }}
+                  key: ELASTICSEARCH_PASSWORD
+            - name: INVENIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.invenioils.secret_name }}
+                  key: SECRET_KEY
+            - name: INVENIO_SECURITY_LOGIN_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.invenioils.secret_name }}
+                  key: SECURITY_LOGIN_SALT
+            - name: INVENIO_CSRF_SECRET_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.invenioils.secret_name }}
+                  key: CSRF_SECRET_SALT
+            - name: INVENIO_SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.invenioils.logging.sentry.secret_name }}
+                  key: SENTRY_DSN
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /shared
+          resources:
+            requests:
+              memory: 500Mi
+              cpu: 0.5
+            limits:
+              memory: 1Gi
+              cpu: 1
+          livenessProbe:
+            exec:
+              command:
+                - bash
+                - -c
+                - "uwsgi_curl -X OPTIONS -H 'Host:{{ .Values.host }}' $(hostname):5000 /ping"
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            initialDelaySeconds: 15
+          readinessProbe:
+            exec:
+              command:
+                - bash
+                - -c
+                - "uwsgi_curl -X OPTIONS -H 'Host:{{ .Values.host }}' $(hostname):5000 /ping"
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            initialDelaySeconds: 15
+      {{ if .Values.persistence.enabled }}
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.name }}
+      {{ end }}
