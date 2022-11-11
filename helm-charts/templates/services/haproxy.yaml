@@ -1,4 +1,3 @@
-{{- if .Values.haproxy.enabled -}}
 ---
 apiVersion: v1
 kind: Service
@@ -14,4 +13,3 @@ spec:
     protocol: TCP
   selector:
     app: haproxy
-{{- end -}}

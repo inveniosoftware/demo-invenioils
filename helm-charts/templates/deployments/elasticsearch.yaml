@@ -1,5 +1,3 @@
-# WARNING: do not use in production!
-# See <https://opensearch.org/docs/latest/opensearch/install/helm/> instead.
 {{- if .Values.search.enabled -}}
 ---
 {{- if .Capabilities.APIVersions.Has "apps.openshift.io/v1/DeploymentConfig" }}
@@ -10,48 +8,43 @@ apiVersion: apps/v1
 kind: Deployment
 {{- end }}
 metadata:
-  name: search
+  name: es
 spec:
   replicas: 1
   {{- if not (.Capabilities.APIVersions.Has "apps.openshift.io/v1/DeploymentConfig") }}
   selector:
     matchLabels:
-      app: search
+      app: es
   {{- end }}
   template:
     metadata:
       labels:
-        app: search
+        app: es
     spec:
       containers:
-        - name: search
-          image: opensearchproject/opensearch:2.3.0
+        - name: es
+          image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
           ports:
             - containerPort: 9200
-            - containerPort: 9600
           resources:
             requests:
-              cpu: "1"
+              cpu: 1
               memory: 512Mi
             limits:
-              cpu: "2"
+              cpu: 2
               memory: 1Gi
           env:
             - name: TZ
               value: "Europe/Zurich"
-            - name: network.host
-              value: "0.0.0.0"
-            - name: "discovery.type"
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+            - name: "discovery.type" # run in development mode
               value: "single-node"
             - name: "bootstrap.memory_lock"
               value: "true"
-            - name: OPENSEARCH_JAVA_OPTS
-              value: "-Xms512m -Xmx512m"
-            - name: "DISABLE_SECURITY_PLUGIN"
-              value: "true"
           volumeMounts:
             - name: data
-              mountPath: /usr/share/opensearch/data
+              mountPath: /usr/share/elasticsearch/data/elasticsearch
           readinessProbe:
             httpGet:
               path: /
@@ -70,4 +63,4 @@ spec:
       volumes:
         - name: data
           emptyDir: {}
-{{- end -}}
+{{- end }}

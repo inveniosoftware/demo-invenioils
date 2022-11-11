@@ -3,12 +3,12 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: invenio
+  name: invenioils
 spec:
   host: {{ .Values.host }}
   to:
     kind: Service
-    name: {{ if .Values.haproxy.enabled }}haproxy{{ else }}web{{ end }}
+    name: haproxy
   port:
     targetPort: http
   tls:
@@ -49,7 +49,7 @@ spec:
         paths:
           - path: ""
             backend:
-              serviceName: {{ if .Values.haproxy.enabled }}haproxy{{ else }}web{{ end }}
+              serviceName: haproxy
               servicePort: http
 {{- end }}
 {{- end }}

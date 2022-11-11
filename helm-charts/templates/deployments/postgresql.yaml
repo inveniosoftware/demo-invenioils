@@ -46,7 +46,7 @@ spec:
                   key: POSTGRESQL_PASSWORD
           volumeMounts:
             - name: data
-              mountPath: /var/lib/pgsql/data
+              mountPath: /var/lib/postgresql/data
           readinessProbe:
             exec:
               command:
@@ -54,9 +54,9 @@ spec:
                 - -i
                 - -c
                 - "pg_isready"
-            initialDelaySeconds: 15
+            initialDelaySeconds: 30
             timeoutSeconds: 5
       volumes:
         - name: data
           emptyDir: {}
-{{- end -}}
+{{- end }}

@@ -4,26 +4,43 @@ kind: ConfigMap
 metadata:
   name: invenio-config
 data:
-  INVENIO_ACCOUNTS_SESSION_REDIS_URL: 'redis://{{ include "redis.host_name" . }}:6379/1'
-  INVENIO_APP_ALLOWED_HOSTS: '[''{{ .Values.host }}'']'
+  INVENIO_DEBUG: "{{ .Values.invenioils.debug }}"
+  INVENIO_DEBUG_TB_ENABLED: "{{ .Values.invenioils.debug_tb_enabled }}"
+  INVENIO_DEBUG_TB_INTERCEPT_REDIRECTS: "{{ .Values.invenioils.debug_tb_intercept_redirects }}"
+
+  # Redis
   INVENIO_CACHE_REDIS_HOST: '{{ include "redis.host_name" . }}'
   INVENIO_CACHE_REDIS_URL: 'redis://{{ include "redis.host_name" . }}:6379/0'
-  INVENIO_CELERY_RESULT_BACKEND: 'redis://{{ include "redis.host_name" . }}:6379/2'
-  INVENIO_COLLECT_STORAGE: flask_collect.storage.file
-  INVENIO_DATACITE_ENABLED: "{{ .Values.invenio.datacite.enabled }}"
-  {{ if .Values.invenio.datacite.enabled }}
-  INVENIO_DATACITE_PREFIX: "{{ .Values.invenio.datacite.prefix }}"
-  INVENIO_DATACITE_TEST_MODE: "{{ .Values.invenio.datacite.test_mode }}"
-  {{ end }}
-  INVENIO_LOGGING_CONSOLE_LEVEL: "{{ .Values.invenio.logging.console.level }}"
-  INVENIO_LOGGING_SENTRY_CELERY: "{{ .Values.invenio.logging.sentry.celery }}"
-  INVENIO_LOGGING_SENTRY_LEVEL: "{{ .Values.invenio.logging.sentry.level }}"
+  INVENIO_ACCOUNTS_SESSION_REDIS_URL: 'redis://{{ include "redis.host_name" . }}:6379/1'
   INVENIO_RATELIMIT_STORAGE_URL: 'redis://{{ include "redis.host_name" . }}:6379/3'
-  {{ if .Values.search.enabled }}
-  INVENIO_SEARCH_HOSTS: "{{ .Values.search.invenio_hosts }}"
-  {{ end }}
-  INVENIO_SEARCH_INDEX_PREFIX: "{{ .Values.invenio.search.index_prefix }}"
-  INVENIO_SITE_HOSTNAME: '{{ .Values.host }}'
-  INVENIO_SITE_UI_URL: 'https://{{ .Values.host }}'
-  INVENIO_SITE_API_URL: 'https://{{ .Values.host }}/api'
-  SENTRY_ENVIRONMENT: "{{ .Values.invenio.logging.sentry.environment }}"
+  INVENIO_COLLECT_STORAGE: "{{ .Values.invenioils.collect_storage }}"
+
+  # Celery
+  INVENIO_CELERY_RESULT_BACKEND: 'redis://{{ include "redis.host_name" . }}:6379/2'
+  INVENIO_CELERY_BROKER_POOL_LIMIT: "{{ .Values.worker.celery_pool_limit }}"
+
+  # Email
+  INVENIO_MAIL_SUPPRESS_SEND: "{{ .Values.invenioils.mail_suppress_send }}"
+
+  # ElasticSearch
+  ELASTICSEARCH_HOST: "{{ .Values.search.host }}"
+  ELASTICSEARCH_USER: "{{ .Values.search.user }}"
+  ELASTICSEARCH_URL_PREFIX: "{{ .Values.search.url_prefix }}"
+  ELASTICSEARCH_PORT: "{{ .Values.search.port }}"
+  ELASTICSEARCH_USE_SSL: "{{ .Values.search.use_ssl }}"
+  ELASTICSEARCH_VERIFY_CERTS: "{{ .Values.search.verify_certs }}"
+  INVENIO_SEARCH_INDEX_PREFIX: "{{ .Values.search.index_prefix }}"
+
+  # SPA UI host
+  INVENIO_SPA_HOST: "{{ .Values.invenioils.spa_host }}"
+
+  # Invenio
+  INVENIO_APP_ALLOWED_HOSTS: '[''{{ .Values.host }}'']'
+  INVENIO_LOGGING_SENTRY_CELERY: "{{ .Values.invenioils.logging.sentry.celery }}"
+  INVENIO_JSONSCHEMAS_HOST: "{{ .Values.host }}"
+
+  # Sentry
+  SENTRY_ENVIRONMENT: "{{ .Values.invenioils.logging.sentry.environment }}"
+
+  # CSRF
+  REST_CSRF_ENABLED: "{{ .Values.invenioils.csrf_enabled }}"
