@@ -24,7 +24,7 @@ RUN cd ui && npm install && \
  REACT_APP_ENV_NAME=$ENV_NAME \
  npm run build
 
-FROM registry.cern.ch/docker.io/library/nginx:1.21
+FROM nginx:1.22
 
 ENV INVENIO_ASSETS=/usr/share/nginx/html/invenio-assets
 ENV REACT_ASSETS=/usr/share/nginx/html/react-assets
