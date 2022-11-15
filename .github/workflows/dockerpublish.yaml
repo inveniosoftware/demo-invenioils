@@ -30,10 +30,16 @@ jobs:
 
       - name: Build backend image
         run: |
-          docker build -f ./demo-invenioils/docker/backend --tag backend_image .
+          docker build -f ./demo-invenioils/docker/backend/Dockerfile --tag backend_image ./demo-invenioils
       - name: Build frontend image
         run: |
-          docker build -f ./demo-invenioils/docker/frontend --tag frontend_image .
+          docker build -f ./demo-invenioils/docker/frontend/Dockerfile --tag frontend_image \
+            --build-arg BACKEND_BUILT_IMAGE_URL=backend_image:latest \
+            --build-arg ENV_NAME=prod \
+            --build-arg INVENIO_UI_URL=https://invenioils.web.cern.ch \
+            --build-arg INVENIO_REST_ENDPOINTS_BASE_URL=https://invenioils.web.cern.ch/api \
+            ./demo-invenioils
+
       - name: Log into registry
         run: echo "${{ secrets.DOCKER_PUBLISH_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
