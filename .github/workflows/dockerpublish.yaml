@@ -5,6 +5,7 @@ on:
     # Publish `main` as Docker `latest` image.
     branches:
       - main
+      - fix-docker-frontend
 
     # Publish `v1.2.3` tags as releases.
     tags:
