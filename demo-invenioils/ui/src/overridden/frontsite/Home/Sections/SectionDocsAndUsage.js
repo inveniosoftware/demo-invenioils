@@ -1,5 +1,13 @@
 import React from 'react';
-import { Card, Container, Header, Label, List, Grid } from 'semantic-ui-react';
+import {
+  Card,
+  Container,
+  Header,
+  Label,
+  List,
+  Grid,
+  Divider,
+} from 'semantic-ui-react';
 
 export const SectionDocsAndUsage = () => {
   return (
@@ -104,6 +112,15 @@ export const SectionDocsAndUsage = () => {
                             </a>
                             .
                           </List.Item>
+                          <Divider />
+                          <List.Item className="install-item">
+                            Demo InvenioILS{' '}
+                            <a href="https://github.com/inveniosoftware/demo-invenioils">
+                              source code
+                            </a>
+                            .
+                          </List.Item>
+                          <Divider />
                           <List.Item className="install-item">
                             InvenioILS{' '}
                             <a href="https://github.com/inveniosoftware/invenio-app-ils">
