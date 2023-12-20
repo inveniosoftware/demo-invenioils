@@ -18,10 +18,10 @@ spec:
               - bash
               - -c
               - |
-                invenio setup
+                invenio setup --skip-admin
                 while [ $? -ne 0 ];
                 do
-                  invenio setup
+                  invenio setup --skip-admin
                 done
             resources:
               requests:
