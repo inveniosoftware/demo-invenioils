@@ -64,19 +64,6 @@ export const SectionDocsAndUsage = () => {
                                 </List>
                               </List.Item>
                               <List.Item className="install-item">
-                                As an admin by logging in with
-                                <List>
-                                  <List.Item>
-                                    <List.Header>
-                                      email: admin@test.ch
-                                    </List.Header>
-                                  </List.Item>
-                                  <List.Item>
-                                    <List.Header>password: 123456</List.Header>
-                                  </List.Item>
-                                </List>
-                              </List.Item>
-                              <List.Item className="install-item">
                                 <List.Header>Note:</List.Header>
                                 <List>
                                   <List.Item>
