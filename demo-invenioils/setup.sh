@@ -10,7 +10,5 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 docker-compose up -d
-pipenv install
-pipenv run invenio setup --verbose
-pipenv run invenio collect -v
-pipenv run invenio webpack buildall
+invenio-cli install
+invenio-cli services setup

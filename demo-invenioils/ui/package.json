@@ -1,14 +1,17 @@
 {
   "name": "demo-invenioils",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "dependencies": {
     "@babel/runtime": "^7.9.2",
-    "@inveniosoftware/react-invenio-app-ils": "^1.0.0-alpha.75",
+    "@inveniosoftware/react-invenio-app-ils": "^1.0.0-alpha.90",
     "@rjsf/core": "^2.5.0",
     "@rjsf/semantic-ui": "^2.5.0",
-    "axios": "^0.21.0",
+    "ajv": "^8.0.0",
+    "ajv-keywords": "^5.0.0",
+    "axios": "^1.6.0",
     "follow-redirects": "^1.14.7",
     "formik": "^2.2.6",
+    "html5-qrcode": "^2.3.8",
     "less": "^3.13.1",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
@@ -24,6 +27,7 @@
     "react-overridable": "^0.0.3",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
+    "react-scripts": "^5.0.1",
     "react-scroll": "^1.7.16",
     "react-searchkit": "^2.0.0",
     "react-show-more": "^2.0.0",
@@ -33,27 +37,21 @@
     "redux-thunk": "^2.3.0",
     "semantic-ui-calendar-react": "^0.15.3",
     "semantic-ui-less": "^2.5.0",
-    "semantic-ui-react": "^2.1.1"
+    "semantic-ui-react": "^2.1.4"
   },
   "devDependencies": {
-    "@craco/craco": "^5.9.0",
-    "@semantic-ui-react/craco-less": "^1.2.1",
-    "eslint": "^6.6.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-config-react-app": "^6.0.0",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-react": "^7.22.0",
-    "prettier": "^1.19.1",
-    "react-scripts": "^3.4.1"
+    "@craco/craco": "^7.0.0",
+    "@inveniosoftware/eslint-config-invenio": "^2.0.0",
+    "@semantic-ui-react/craco-less": "^3.0.0"
   },
   "scripts": {
     "start": "HOST=127.0.0.1 HTTPS=true craco start",
     "build": "craco build",
     "test": "craco test",
-    "lint": "eslint src/",
     "eject": "craco eject",
-    "https_start": "HTTPS=true craco start"
+    "https_start": "HTTPS=true craco start",
+    "lint": "eslint src/ --ext .js --max-warnings=0",
+    "format": "prettier --write \"src/**/*.js\""
   },
   "eslintConfig": {
     "env": {
@@ -77,6 +75,6 @@
     ]
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   }
 }
