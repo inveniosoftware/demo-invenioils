@@ -2,8 +2,9 @@
   "name": "demo-invenioils",
   "version": "2.0.0",
   "dependencies": {
+    "@artsy/fresnel": "^1.3.1",
     "@babel/runtime": "^7.9.2",
-    "@inveniosoftware/react-invenio-app-ils": "^1.0.0-alpha.90",
+    "@inveniosoftware/react-invenio-app-ils": "^1.0.0",
     "@rjsf/core": "^2.5.0",
     "@rjsf/semantic-ui": "^2.5.0",
     "ajv": "^8.0.0",
@@ -27,7 +28,6 @@
     "react-overridable": "^0.0.3",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "^5.0.1",
     "react-scroll": "^1.7.16",
     "react-searchkit": "^2.0.0",
     "react-show-more": "^2.0.0",
@@ -37,12 +37,13 @@
     "redux-thunk": "^2.3.0",
     "semantic-ui-calendar-react": "^0.15.3",
     "semantic-ui-less": "^2.5.0",
-    "semantic-ui-react": "^2.1.4"
+    "semantic-ui-react": "^2.1.5"
   },
   "devDependencies": {
     "@craco/craco": "^7.0.0",
     "@inveniosoftware/eslint-config-invenio": "^2.0.0",
-    "@semantic-ui-react/craco-less": "^3.0.0"
+    "@semantic-ui-react/craco-less": "^3.0.0",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "HOST=127.0.0.1 HTTPS=true craco start",
@@ -75,6 +76,6 @@
     ]
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=14.0.0 <15.0.0"
   }
 }
